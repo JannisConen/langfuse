@@ -247,6 +247,16 @@ export const sessionRouter = createTRPCRouter({
           action: "publish",
           after: input.public,
         });
+        // update traces in the session as well to reflect public state of the session
+        await ctx.prisma.trace.updateMany({
+          where: {
+            sessionId: input.sessionId,
+            projectId: input.projectId,
+          },
+          data: {
+            public: input.public,
+          }
+        });
         return ctx.prisma.traceSession.update({
           where: {
             id_projectId: {
